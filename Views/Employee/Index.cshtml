@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        getEmployees();
+    });
+
+    function getEmployees() {
+          $.ajax({
+            url: '@Url.Action("GetEmployees", "Home")',
+            type: 'Post',
+            dataType: 'json',
+            contentTpe: 'application/json;charset=utf-8',
+            data: {},
+            beforeSend: function () {
+                $("#loader").css("display", 'block');
+            },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[i].EmployeeId + "</td>");
+                    tr.append("<td>" + data[i].Name + "</td>");
+                    tr.append("<td>" + data[i].City + "</td>");
+                    tr.append("<td>" + data[i].ContactNo + "</td>");
+                    tr.append("<td>" + data[i].DepartmentMasterDto.Name + "</td>");
+                    tr.append("<td>" + data[i].DepartmentMasterDto.OrganizationMasterDto.Name + "</td>");
+                    $('#tblEmp').append(tr);
+                }
+            },
+            erorr: function (e) {
+                alert(e.statusText);
+            },
+            complete: function () {
+                $("#loader").css("display", 'none');
+            }
+        });
+    }
+</script>
+<div class="container">
+    <br />
+    <div class="col-md-8 offset-2">
+        <div class="card">
+            <div class="card-header">
+                Add Employee
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Name :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtOrgName" placeholder="Please Add Name of organization" class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Age :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtAge" placeholder="Please Add Address " class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Gender :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <select id="ddlGender" class="form-control">
+                            <option value="">-------Select Gender--------</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Address :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <textarea id="txtAddress" placeholder="Please Add Address " class="form-control"></textarea>
+
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>City :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtAge" placeholder="Please Add City " class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Contact No. :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtAge" placeholder="Please Add Contat No " class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <input type="button" id="btnSave" class="btn btn-success" value="Save" />
+                        <input type="button" id="btnReset" class="btn btn-danger" value="Reset" onclick="ResetFields();" />
+                    </div>
+                </div>
+                <hr />
+                <div class="card">
+                    <div class="card-header">
+                        Total Employees
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped" id="tblEmp">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>City</th>
+                                    <th>Contact</th>
+                                    <th>Department</th>
+                                    <th>Organization</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblEmp"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="organizationId" value="0" />
+    <img id="loader" src="~/Images/loader.gif" style="position:absolute; top:40%; left:40%; display:none;" />
+</div>
+
+

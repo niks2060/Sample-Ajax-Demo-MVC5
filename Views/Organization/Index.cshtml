@@ -1,0 +1,169 @@
+﻿@model SampleAjaxDemo.ViewModel.OrganizationVM
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        getOrganisations();
+        $("#btnSave").on("click", function () {
+            var model = new Object();
+            var OrganizationMasterDto = new Object();
+            OrganizationMasterDto.OrganizationId = $("#organizationId").val();
+            OrganizationMasterDto.Name = $("#txtOrgName").val();
+            OrganizationMasterDto.Address = $("#txtOrgAddress").val();
+            OrganizationMasterDto.City = $("#ddlCity").val();
+            OrganizationMasterDto.Country = $("#ddlCountry").val();
+            model.organizationMasterDto = OrganizationMasterDto;
+           jQuery.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Save", "Organization")',
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({ model: model }),
+                    beforeSend: function () {
+                        
+                    },
+                    success: function (data) {
+                        alert(data.Message);
+                        ResetFields();
+                        getOrganisations();
+                    },
+                    complete: function ()
+                    { }
+                });
+        });
+    });
+
+     function getOrganisations() {
+        $.ajax({
+            url: '@Url.Action("GetOrganizations", "Home")',
+            type: 'Post',
+            dataType: 'json',
+            contentTpe: 'application/json;charset=utf-8',
+            data: {},
+            beforeSend: function () {
+                $("#loader").css("display", 'block');
+            },
+            success: function (data) {
+                $('#tblOrg').empty();
+                for (var i = 0; i < data.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[i].OrganizationId + "</td>");
+                    tr.append("<td>" + data[i].Name + "</td>");
+                    tr.append("<td>" + data[i].City + "</td>");
+                    tr.append("<td>" + data[i].Address + "</td>");
+                    tr.append("<td>" + data[i].Country + "</td>");
+                    $('#tblOrg').append(tr);
+                }
+            },
+            erorr: function (e) {
+                alert(e.statusText);
+            },
+            complete: function () {
+                $("#loader").css("display", 'none');
+            }
+        });
+
+    }
+
+    function ResetFields() {
+        $("#txtOrgName").val("");
+        $("#txtOrgAddress").val("");
+        $("#ddlCity").val("");
+        $("#ddlCountry").val("");
+    }
+
+</script>
+
+<div class="container">
+    <br />
+    <div class="col-md-8 offset-2">
+        <div class="card">
+            <div class="card-header">
+                Add Organization
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Name :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtOrgName" placeholder="Please Add Name of organization" class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Address :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtOrgAddress" placeholder="Please Add Address " class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>City :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <select id="ddlCity" class="form-control">
+                            <option>---Select City---</option>
+                            <option value="Pune">Pune</option>
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Bengluru">Bengluru</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Country :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <select id="ddlCountry" class="form-control">
+                            <option>---Select Country---</option>
+                            <option value="India">India</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <input type="button" id="btnSave" class="btn btn-success" value="Save" />
+                        <input type="button" id="btnReset" class="btn btn-danger" value="Reset" onclick="ResetFields();" />
+                    </div>
+                </div>
+                <hr />
+                <div class="card">
+                    <div class="card-header">
+                        Total Organizations
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>City</th>
+                                    <th>Country</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblOrg"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="organizationId" value="0" />
+    <img id="loader" src="~/Images/loader.gif" style="position:absolute; top:40%; left:40%; display:none;" />
+</div>
+

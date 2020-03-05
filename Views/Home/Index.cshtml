@@ -1,0 +1,191 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        getOrganisations();
+        getDepartments();
+        getEmployees();
+    });
+
+    function getOrganisations() {
+        $.ajax({
+            url: '@Url.Action("GetOrganizations", "Home")',
+            type: 'Post',
+            dataType: 'json',
+            contentTpe: 'application/json;charset=utf-8',
+            data: {},
+            beforeSend: function () {
+                $("#loader").css("display", 'block');
+            },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[i].OrganizationId + "</td>");
+                    tr.append("<td>" + data[i].Name + "</td>");
+                    tr.append("<td>" + data[i].City + "</td>");
+                    tr.append("<td>" + data[i].Address + "</td>");
+                    tr.append("<td>" + data[i].Country + "</td>");
+                    $('#tblOrg').append(tr);
+                }
+            },
+            erorr: function (e) {
+                alert(e.statusText);
+            },
+            complete: function () {
+                $("#loader").css("display", 'none');
+            }
+        });
+
+    }
+
+    function getDepartments() {
+         $.ajax({
+            url: '@Url.Action("GetDepartments", "Home")',
+            type: 'Post',
+            dataType: 'json',
+            contentTpe: 'application/json;charset=utf-8',
+            data: {},
+            beforeSend: function () {
+                $("#loader").css("display", 'block');
+            },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[i].DepartmentId + "</td>");
+                    tr.append("<td>" + data[i].Name + "</td>");
+                    tr.append("<td>" + data[i].Origin + "</td>");
+                    tr.append("<td>" + data[i].Slogan + "</td>");
+                    tr.append("<td>" + data[i].OrganizationMasterDto.Name + "</td>");
+                    $('#tblDept').append(tr);
+                }
+            },
+            erorr: function (e) {
+                alert(e.statusText);
+            },
+            complete: function () {
+                $("#loader").css("display", 'none');
+            }
+        });
+    }
+
+    function getEmployees() {
+          $.ajax({
+            url: '@Url.Action("GetEmployees", "Home")',
+            type: 'Post',
+            dataType: 'json',
+            contentTpe: 'application/json;charset=utf-8',
+            data: {},
+            beforeSend: function () {
+                $("#loader").css("display", 'block');
+            },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[i].EmployeeId + "</td>");
+                    tr.append("<td>" + data[i].Name + "</td>");
+                    tr.append("<td>" + data[i].City + "</td>");
+                    tr.append("<td>" + data[i].ContactNo + "</td>");
+                    tr.append("<td>" + data[i].DepartmentMasterDto.Name + "</td>");
+                    tr.append("<td>" + data[i].DepartmentMasterDto.OrganizationMasterDto.Name + "</td>");
+                    $('#tblEmp').append(tr);
+                }
+            },
+            erorr: function (e) {
+                alert(e.statusText);
+            },
+            complete: function () {
+                $("#loader").css("display", 'none');
+            }
+        });
+    }
+</script>
+
+<div class="container">
+    <div class="col-md-12">
+        <br />
+        <div class="card">
+            <div class="card-header">
+                Home
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Total Organizations
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Name</th>
+                                            <th>Address</th>
+                                            <th>City</th>
+                                            <th>Country</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblOrg"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                Total Departments
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Name</th>
+                                            <th>Origin</th>
+                                            <th>Slogan</th>
+                                            <th>Organization</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblDept"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                Total Employess
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-striped" id="tblEmp">
+                                    <thead>
+                                        <tr>
+                                            <th>EmployeeId</th>
+                                            <th>Name</th>
+                                            <th>City</th>
+                                            <th>Contact No</th>
+                                            <th>Department Name</th>
+                                            <th>Organization</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblEmp"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr />
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <img id="loader" src="~/Images/loader.gif" style="position:absolute; top:40%; left:40%; display:none;" />
+</div>
+

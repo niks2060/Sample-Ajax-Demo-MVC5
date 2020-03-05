@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        LoadOrgainzations();
+        LoadDepartments();
+    });
+
+    function LoadOrgainzations() {
+        $.ajax({
+            url: '@Url.Action("GetOrganizations", "Home")',
+            type: 'Post',
+            dataType: 'json',
+            contentTpe: 'application/json;charset=utf-8',
+            data: {},
+            beforeSend: function () {
+                $("#loader").css("display", 'block');
+            },
+            success: function (data) {
+                $("#ddlOrganization").append($("<option></option>").val("").html("----------Select Organization------"));
+                $.each(data, function (d, value) {
+                    $("#ddlOrganization").append($("<option></option>").val(value.OrganizationId).html(value.Name));
+                })
+            },
+            erorr: function (e) {
+                alert(e.statusText);
+            },
+            complete: function () {
+                $("#loader").css("display", 'none');
+            }
+        });
+    }
+
+    function LoadDepartments() {
+         $.ajax({
+            url: '@Url.Action("GetDepartments", "Home")',
+            type: 'Post',
+            dataType: 'json',
+            contentTpe: 'application/json;charset=utf-8',
+            data: {},
+            beforeSend: function () {
+                $("#loader").css("display", 'block');
+            },
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[i].DepartmentId + "</td>");
+                    tr.append("<td>" + data[i].Name + "</td>");
+                    tr.append("<td>" + data[i].Origin + "</td>");
+                    tr.append("<td>" + data[i].Slogan + "</td>");
+                    tr.append("<td>" + data[i].OrganizationMasterDto.Name + "</td>");
+                    $('#tblDept').append(tr);
+                }
+            },
+            erorr: function (e) {
+                alert(e.statusText);
+            },
+            complete: function () {
+                $("#loader").css("display", 'none');
+            }
+        });
+    }
+</script>
+<div class="container">
+    <br />
+    <div class="col-md-8 offset-2">
+        <div class="card">
+            <div class="card-header">
+                Add Department
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Name :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtDeptName" placeholder="Please Add Name of Department" class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Origin :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtOrigin" placeholder="Please Add Origin " class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Slogan :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="txtSlogan" placeholder="Please Add Slogan " class="form-control" />
+
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Country :</label>
+                    </div>
+                    <div class="col-md-9">
+                        <select id="ddlOrganization" class="form-control"></select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <input type="button" id="btnSave" class="btn btn-success" value="Save" />
+                        <input type="button" id="btnReset" class="btn btn-danger" value="Reset" onclick="ResetFields();" />
+                    </div>
+                </div>
+                <hr />
+                <div class="card">
+                    <div class="card-header">
+                        Total Departments
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Origin</th>
+                                    <th>Slogan</th>
+                                    <th>Organization</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblDept"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="departmentId" value="0" />
+    <img id="loader" src="~/Images/loader.gif" style="position:absolute; top:40%; left:40%; display:none;" />
+</div>
